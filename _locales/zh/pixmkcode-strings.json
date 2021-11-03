@@ -119,5 +119,5 @@
   "PixLanesField.LANES_RX1|block": "車道右側 X1 座標",
   "PixLanesField.LANES_RY1|block": "車道右側 Y1 座標",
   "PixLanesField.LANES_RX2|block": "車道右側 X2 座標",
-  "PixLanesField.LANES_RY2|block": "車道右側 Y2 座標",
+  "PixLanesField.LANES_RY2|block": "車道右側 Y2 座標"
 }
