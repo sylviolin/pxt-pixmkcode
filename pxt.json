@@ -12,7 +12,7 @@
         "pixetto.cpp",
         "shims.d.ts",
         "enums.d.ts",
-        "_locales/zh/pixmkcode-strings.json"
+        "_locales/zh-TW/pixmkcode-strings.json"
     ],
     "public": true
 }
