@@ -11,6 +11,17 @@
 
 #define PXT_PACKET_START 	0xFD
 #define PXT_PACKET_END   	0xFE
+
+#define PXT_CMD_GET_VERSION	0xD0
+#define PXT_CMD_SET_DETMODE	0xD1
+#define PXT_CMD_SET_FUNC    0xD2
+#define PXT_CMD_SET_DELAY   0xD4
+#define PXT_CMD_GET_DATA    0xD8
+
+#define PXT_RET_FW_VERSION	0xE3
+#define PXT_RET_OBJNUM		0x46 //0xE4
+
+/*
 #define PXT_CMD_STREAMOFF	0x7A
 #define PXT_CMD_STREAMON_CB 0x7B
 #define PXT_CMD_QUERY		0x7C
@@ -19,6 +30,7 @@
 
 #define PXT_RET_CAM_SUCCESS	0xE0
 #define PXT_RET_CAM_ERROR	0xE1   
+*/
 
 #define SERIAL_BUF_SIZE		64
 #define DATA_SIZE			33
@@ -193,7 +205,7 @@ namespace pixetto {
 		
 		return (sum == buf[len-2]);
 	}
-	
+	/*
 	bool checkcam()
 	{
 		ssflush();
@@ -223,21 +235,23 @@ namespace pixetto {
 			return true;
 		return false;
 	}
-	
+	*/
 	bool opencam(bool reset) 
 	{
-		if (reset)
-			uBit.sleep(8000);
+		//if (reset)
+		//	uBit.sleep(8000);
 			
-		int try_streamon = 0;
+		int try_connect = 0;
 		do {
 			ssflush();
 			
-			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_STREAMON_CB, 0, PXT_PACKET_END};
+			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_VERSION, 0, PXT_PACKET_END};
 			serial->send(cmd_buf, 5, ASYNC);
 			
+			
+			// version = {0xFD, 0, 0xE3, product, (uint8_t)major, (uint8_t)minor, (uint8_t)revision, 0, 0xFE};
 			int read_len = 0;
-			uint8_t code_buf[5] = {0xFF};
+			uint8_t code_buf[9] = {0xFF};
 			int loop = 0;
 			
 			do {
@@ -247,17 +261,17 @@ namespace pixetto {
 
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) return false;
 			
-			read_len = serial->read(&code_buf[1], 4);
+			read_len = serial->read(&code_buf[1], 8);
 
-			if (read_len == 4 &&
+			if (read_len == 8 &&
 			    code_buf[0] == PXT_PACKET_START &&
-				code_buf[4] == PXT_PACKET_END &&
-				code_buf[2] == PXT_RET_CAM_SUCCESS)
+				code_buf[8] == PXT_PACKET_END &&
+				code_buf[2] == PXT_RET_FW_VERSION)
 				return true;
 				
-			try_streamon++;
+			try_connect++;
 			uBit.sleep(500);
-		} while (try_streamon < 4);
+		} while (try_connect < 4);
 		
 		return false;
 	}
@@ -267,7 +281,7 @@ namespace pixetto {
 		
 		bool ret = false;
 		PinName txn, rxn;
-		uBit.sleep(10000);
+		uBit.sleep(6000);
 		
 		if (getPinName(tx, txn) && getPinName(rx, rxn))
 		{
@@ -293,21 +307,20 @@ namespace pixetto {
     
     int test_opencam(bool reset) 
 	{
-		if (reset)
-			uBit.sleep(8000);
+		//if (reset)
+		//	uBit.sleep(8000);
 			
-		int ret = 0;
-		int try_streamon = 0;
+		//int ret = 0;
+		int try_connect = 0;
 		do {
 			ssflush();
 			
-			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_STREAMON_CB, 0, PXT_PACKET_END};
+			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_VERSION, 0, PXT_PACKET_END};
 			serial->send(cmd_buf, 5, ASYNC);
 			
 			int loop = 0;
 			int read_len = 0;
 			uint8_t code_buf[5] = {0xFF};
-			
 			
 			do {
 				read_len = serial->read(code_buf, 1, ASYNC);
@@ -319,25 +332,18 @@ namespace pixetto {
 			
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) return 1;
 			
-			read_len = serial->read(&code_buf[1], 4);
+			read_len = serial->read(&code_buf[1], 8);
 
-			if (read_len == 4 &&
+			if (read_len == 8 &&
 			    code_buf[0] == PXT_PACKET_START &&
-				code_buf[4] == PXT_PACKET_END &&
-				code_buf[2] == PXT_RET_CAM_SUCCESS)
+				code_buf[8] == PXT_PACKET_END &&
+				code_buf[2] == PXT_RET_FW_VERSION)
 				return 2;
-				
-			if (code_buf[0] == PXT_PACKET_START &&
-				code_buf[4] == PXT_PACKET_END &&
-				code_buf[2] == PXT_RET_CAM_ERROR)
-				ret = 3;
 
-			try_streamon++;
+			try_connect++;
 			uBit.sleep(500);
-		} while (try_streamon < 4);
+		} while (try_connect < 4);
 
-		if (ret > 0) return ret;
-		
 		return 4;
 	}
     //% 
@@ -372,7 +378,7 @@ namespace pixetto {
 
 	//%
 	void enableFunc(int func_id){
-		uint8_t cmd_buf[6] = {PXT_PACKET_START, 0x06, PXT_CMD_ENABLEFUNC, func_id, 0, PXT_PACKET_END};
+		uint8_t cmd_buf[6] = {PXT_PACKET_START, 0x06, PXT_CMD_SET_FUNC, (uint8_t)func_id, 0, PXT_PACKET_END};
 		serial->send(cmd_buf, 6, ASYNC);
 		return;
 	}
@@ -382,44 +388,54 @@ namespace pixetto {
 		if (bOnStarting) 
 			return false;
 		
-		int a = 0;
-		for (a=0; a<DATA_SIZE; a++)
-			data_buf[a] = 0xFF;
-	
 		ssflush();
-		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_QUERY, 0, PXT_PACKET_END};
+		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
 		serial->send(cmd_buf, 5, ASYNC);
 
-		int read_len = 0;
-		int loop = 0;
+		int a = 0;
+		while (1) 
+		{
+			for (a=0; a<DATA_SIZE; a++)
+				data_buf[a] = 0xFF;
+	
+			int read_len = 0;
+			int loop = 0;
 
-		do {
-			read_len = serial->read(data_buf, 1, ASYNC);
-			loop++;
-		} while (data_buf[0] != PXT_PACKET_START && loop < 500000);
-		
-		if (read_len == 0 || read_len == MICROBIT_NO_DATA) {
-			if (!checkcam()) {
-				uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_RESET, 0, PXT_PACKET_END};
-				serial->send(cmd_buf, 5, ASYNC);
-				opencam(true);
+			do {
+				read_len = serial->read(data_buf, 1, ASYNC);
+				loop++;
+			} while (data_buf[0] != PXT_PACKET_START && loop < 300000);
+			
+			if (read_len == 0 || read_len == MICROBIT_NO_DATA) {
+				// TODO: RESET
+
+				/*if (!checkcam()) {
+					uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_RESET, 0, PXT_PACKET_END};
+					serial->send(cmd_buf, 5, ASYNC);
+					opencam(true);
+				}*/
+				return false;
 			}
-			return false;
-		}
 
-		read_len = serial->read(&data_buf[1], 2);
-		data_len = data_buf[1];
-		if (data_len > 3) {
-			read_len = serial->read(&data_buf[3], data_len - 3);
+			read_len = serial->read(&data_buf[1], 2);
+			data_len = data_buf[1];
+			if (data_len > 3) {
+				read_len = serial->read(&data_buf[3], data_len - 3);
+			}
+			else
+				return false;
+			
+			if (read_len != (data_len-3)) return false;
+			if (data_buf[data_len-1] != PXT_PACKET_END) return false;
+			if (!verifyChecksum(data_buf, data_len)) return false;
+			if (data_buf[2] == 0) return false; // num == 0
+			
+			
+			if (data_buf[2] == PXT_RET_OBJNUM)
+			{
+				continue;
+			}
 		}
-		else
-			return false;
-		
-		if (read_len != (data_len-3)) return false;
-		if (data_buf[data_len-1] != PXT_PACKET_END) return false;
-		if (!verifyChecksum(data_buf, data_len)) return false;
-		if (data_buf[2] == 0) return false; // num == 0
-		
 		
 		if (data_buf[2] == DIGITS_OPERATION) {
 			m_x = data_buf[3];
@@ -501,7 +517,7 @@ namespace pixetto {
 			data_buf[a] = 0xFF;
 	
 		ssflush();
-		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_QUERY, 0, PXT_PACKET_END};
+		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
 		serial->send(cmd_buf, 5, ASYNC);
 		
 		int read_len = 0;
@@ -512,14 +528,14 @@ namespace pixetto {
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) {
 				loop++;
 			}
-		} while (data_buf[0] != PXT_PACKET_START && loop < 500000);
+		} while (data_buf[0] != PXT_PACKET_START && loop < 300000);
 		
 		if (read_len == 0 || read_len == MICROBIT_NO_DATA) {
-			if (!checkcam()) {
+			/*if (!checkcam()) {
 				uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_RESET, 0, PXT_PACKET_END};
 				serial->send(cmd_buf, 5, ASYNC);
 				opencam(true);
-			}
+			}*/
 			return -2;
 		}
 		
