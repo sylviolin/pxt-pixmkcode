@@ -518,6 +518,147 @@ namespace pixetto {
 		serial->send(cmd_buf, 5, ASYNC);
 		
 		int a = 0;
+		while(1)
+		{
+			int buffered_len = 0;
+			int read_len = 0;
+			int loop = 0;
+
+			for (a=0; a<DATA_SIZE; a++)
+				data_buf[a] = 0xFF;
+		
+			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
+				loop++;
+				continue;
+			}
+
+			if (loop >= 300000) return -3;
+			
+			while (buffered_len>0) {
+				read_len = serial->read(&data_buf[0], 1);
+				if (data_buf[0] == PXT_PACKET_START)
+					break;
+				else
+					buffered_len--;
+			}
+			
+			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
+			data_len = data_buf[1];
+			if (data_len > 3)
+				read_len = serial->read(&data_buf[3], data_len - 3);
+			else
+				return 1;
+			
+			if (read_len != (data_len-3)) return 2;
+			if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
+			if (!verifyChecksum(data_buf, data_len)) return 4;
+			if (data_buf[2] == 0) return 5; // null packet
+			
+			if (data_buf[2] == PXT_RET_OBJNUM)
+			{
+				continue;
+				/*
+				for (a=0; a<DATA_SIZE; a++)
+					data_buf[a] = 0xFF;
+
+				read_len = serial->read(&data_buf[0], 1); //, ASYNC); //START
+				read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
+				data_len = data_buf[1];
+				if (data_len > 3)
+					read_len = serial->read(&data_buf[3], data_len - 3);
+				else
+					return 1;
+				
+				if (read_len != (data_len-3)) return 2;
+				if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
+				if (!verifyChecksum(data_buf, data_len)) return 4;
+				if (data_buf[2] == 0) return 5; // null packet
+				*/
+			}
+		}
+		
+		if (data_buf[2] == DIGITS_OPERATION) {
+			m_x = data_buf[3];
+			m_y = data_buf[4];
+			m_w = data_buf[5];
+			m_h = data_buf[6];
+			
+			m_eqAnswer = 0;
+			for (a=8; a<=14; a++) 
+				m_eqAnswer = m_eqAnswer * 10 + data_buf[a];
+
+			m_eqAnswer /= 100;
+			if (data_buf[7] == 0) m_eqAnswer = 0 - m_eqAnswer;
+			
+			memset(m_eqExpr, 0, sizeof(m_eqExpr));
+			m_eqLen = data_len - 17;
+			for (a=0; a<m_eqLen; a++)
+				m_eqExpr[a] = (char)data_buf[a+15];
+		}
+		else if (data_buf[2] == LANES_DETECTION) {
+			m_x = data_buf[3];
+			m_y = data_buf[4];
+		}
+		else if (data_buf[2] == LANE_AND_SIGN) {
+			if (data_buf[18] == 0 || data_buf[18] == 2) {
+				m_x = -1; m_y = -1;
+			}
+			else {
+				m_x = data_buf[3];
+				m_y = data_buf[4];
+			}
+
+			if (data_buf[18] == 0 || data_buf[18] == 1)
+				m_type = -1;
+			else
+				m_type = data_buf[13];
+		}
+		else if (data_buf[2] == SIMPLE_CLASSIFIER) {
+			m_type = data_buf[3] * 256 + data_buf[4];
+			m_x = data_buf[5];
+			m_y = data_buf[6];
+			m_w = data_buf[7];
+			m_h = data_buf[8];
+		}
+		else {
+			m_type = data_buf[3];
+			m_x = data_buf[4];
+			m_y = data_buf[5];
+			m_w = data_buf[6];
+			m_h = data_buf[7];
+			
+			if (data_buf[2] == APRILTAG) {
+				int value = 0;
+				value = (short)(data_buf[8] * 256 + data_buf[9]);
+				m_posx = (float)value / 100.0;
+				value = (short)(data_buf[10] * 256 + data_buf[11]);
+				m_posy = (float)value / 100.0;
+				value = (short)(data_buf[12] * 256 + data_buf[13]);
+				m_posz = (float)value / 100.0;
+				
+				m_rotx = (short)(data_buf[14] * 256 + data_buf[15]);
+				m_roty = (short)(data_buf[16] * 256 + data_buf[17]);
+				m_rotz = (short)(data_buf[18] * 256 + data_buf[19]);
+				
+				m_centerx = (short)(data_buf[20] * 256 + data_buf[21]);
+				m_centery = (short)(data_buf[22] * 256 + data_buf[23]);
+			}
+		}
+		return 6;
+	}
+
+	/*
+	//%
+	int isTested(){
+		if (bOnStarting) 
+			return -1;
+		
+		//ssflush();
+		serial->clearRxBuffer();
+		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
+		serial->send(cmd_buf, 5, ASYNC);
+		
+		int a = 0;
 		//while(1)
 		{
 			for (a=0; a<DATA_SIZE; a++)
@@ -534,11 +675,11 @@ namespace pixetto {
 			} while (data_buf[0] != PXT_PACKET_START && loop < 300000);
 			
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) {
-				/*if (!checkcam()) {
-					uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_RESET, 0, PXT_PACKET_END};
-					serial->send(cmd_buf, 5, ASYNC);
-					opencam(true);
-				}*/
+				//if (!checkcam()) {
+				//	uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_RESET, 0, PXT_PACKET_END};
+				//	serial->send(cmd_buf, 5, ASYNC);
+				//	opencam(true);
+				//}
 				return -2;
 			}
 			
@@ -646,7 +787,7 @@ namespace pixetto {
 		}
 		return 6;
 	}
-
+	*/
 
 	//%
 	bool getFuncID(int func_id){
