@@ -556,7 +556,7 @@ namespace pixetto {
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
 			{
-				return 7;
+				continue;
 			}
 		}
 		
