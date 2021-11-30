@@ -527,7 +527,7 @@ namespace pixetto {
 
 		if (loop >= 300000) return -1;
 
-		return buffered_len;
+		//return buffered_len;
 		
 		int a = 0;
 		while(1)
@@ -537,15 +537,15 @@ namespace pixetto {
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
 		
-			if (buffered_len <= 0) return -2;
+			//if (buffered_len <= 0) return -2;
 			
-			while (buffered_len>0) {
+			//while (buffered_len>0) {
 				read_len = serial->read(&data_buf[0], 1);
-				if (data_buf[0] == PXT_PACKET_START)
-					break;
-				else
-					buffered_len--;
-			}
+			//	if (data_buf[0] == PXT_PACKET_START)
+			//		break;
+			//	else
+			//		buffered_len--;
+			//}
 			
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
@@ -561,9 +561,9 @@ namespace pixetto {
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
 			{
-				buffered_len -= data_len;
-				continue;
-				/*
+				//buffered_len -= data_len;
+				//continue;
+				
 				for (a=0; a<DATA_SIZE; a++)
 					data_buf[a] = 0xFF;
 
@@ -579,7 +579,7 @@ namespace pixetto {
 				if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
 				if (!verifyChecksum(data_buf, data_len)) return 4;
 				if (data_buf[2] == 0) return 5; // null packet
-				*/
+				
 			}
 		}
 		
