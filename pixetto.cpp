@@ -311,11 +311,12 @@ namespace pixetto {
 		
 		int ret = false;
 		PinName txn, rxn;
-		uBit.sleep(6000);
+		uBit.sleep(3000);
 		
 		if (getPinName(tx, txn) && getPinName(rx, rxn))
 		{
-			serial = new MicroBitSerial(txn, rxn, 64, 20);
+			if (serial == nullptr)
+				serial = new MicroBitSerial(txn, rxn, 64, 20);
 
 			#if MICROBIT_CODAL
 			serial->setBaudrate(38400);
