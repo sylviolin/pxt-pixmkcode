@@ -518,7 +518,7 @@ namespace pixetto {
 		serial->send(cmd_buf, 5, ASYNC);
 		
 		int a = 0;
-		while(1)
+		//while(1)
 		{
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
@@ -556,7 +556,24 @@ namespace pixetto {
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
 			{
-				continue;
+				//continue;
+				
+				for (a=0; a<DATA_SIZE; a++)
+					data_buf[a] = 0xFF;
+
+				read_len = serial->read(&data_buf[0], 1); //, ASYNC); //START
+				read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
+				data_len = data_buf[1];
+				if (data_len > 3)
+					read_len = serial->read(&data_buf[3], data_len - 3);
+				else
+					return 1;
+				
+				if (read_len != (data_len-3)) return 2;
+				if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
+				if (!verifyChecksum(data_buf, data_len)) return 4;
+				if (data_buf[2] == 0) return 5; // null packet
+
 			}
 		}
 		
