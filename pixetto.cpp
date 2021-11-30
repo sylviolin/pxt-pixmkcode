@@ -530,7 +530,7 @@ namespace pixetto {
 		//return buffered_len;
 		
 		int a = 0;
-		while(1)
+		//while(1)
 		{
 			int read_len = 0;
 
