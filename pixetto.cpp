@@ -516,14 +516,12 @@ namespace pixetto {
 		serial->clearRxBuffer();
 		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
 		serial->send(cmd_buf, 5);//, ASYNC);
-		
-		int buffered_len = 0;
-		int loop = 0;
-
 
 		int a = 0;
-		//while(1)
-		{
+		
+		while(1){
+			int buffered_len = 0;
+			int loop = 0;
 			int read_len = 0;
 
 			for (a=0; a<DATA_SIZE; a++)
@@ -535,16 +533,8 @@ namespace pixetto {
 			}
 
 			if (loop >= 300000) return -1;
-			//if (buffered_len <= 0) return -2;
-			
-			//while (buffered_len>0) {
-				read_len = serial->read(&data_buf[0], 1);
-			//	if (data_buf[0] == PXT_PACKET_START)
-			//		break;
-			//	else
-			//		buffered_len--;
-			//}
-			
+
+			read_len = serial->read(&data_buf[0], 1);
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 			if (data_len > 3)
@@ -559,8 +549,8 @@ namespace pixetto {
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
 			{
-				//buffered_len -= data_len;
-				//continue;
+				continue;
+				/*
 				for (a=0; a<DATA_SIZE; a++)
 					data_buf[a] = 0xFF;
 
@@ -584,10 +574,12 @@ namespace pixetto {
 				if (read_len != (data_len-3)) return 2;
 				if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
 				if (!verifyChecksum(data_buf, data_len)) return 4;
-				if (data_buf[2] == 0) return 5; // null packet
+				if (data_buf[2] == 0) return 5; // null packet*/
 				
 			}
-		}
+			else
+				break;
+		}	
 		
 		if (data_buf[2] == DIGITS_OPERATION) {
 			m_x = data_buf[3];
