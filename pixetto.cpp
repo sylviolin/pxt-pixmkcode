@@ -507,7 +507,6 @@ namespace pixetto {
 		return true;
 	}
 
-	/*
 	//%
 	int isTested(){
 		if (bOnStarting) 
@@ -521,15 +520,7 @@ namespace pixetto {
 		int buffered_len = 0;
 		int loop = 0;
 
-		while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
-			loop++;
-			continue;
-		}
 
-		if (loop >= 300000) return -1;
-
-		//return buffered_len;
-		
 		int a = 0;
 		//while(1)
 		{
@@ -538,6 +529,12 @@ namespace pixetto {
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
 		
+			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
+				loop++;
+				continue;
+			}
+
+			if (loop >= 300000) return -1;
 			//if (buffered_len <= 0) return -2;
 			
 			//while (buffered_len>0) {
@@ -564,10 +561,18 @@ namespace pixetto {
 			{
 				//buffered_len -= data_len;
 				//continue;
-				
 				for (a=0; a<DATA_SIZE; a++)
 					data_buf[a] = 0xFF;
 
+				loop = 0;
+				buffered_len = 0;
+				while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
+					loop++;
+					continue;
+				}
+
+				if (loop >= 300000) return -3;
+						
 				read_len = serial->read(&data_buf[0], 1); //, ASYNC); //START
 				read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 				data_len = data_buf[1];
@@ -653,8 +658,8 @@ namespace pixetto {
 		}
 		return 6;
 	}
-	*/
 	
+	/*
 	//%
 	int isTested(){
 		if (bOnStarting) 
@@ -794,7 +799,7 @@ namespace pixetto {
 		}
 		return 6;
 	}
-
+	*/
 	//%
 	bool getFuncID(int func_id){
 		return (data_buf[2] == func_id);
