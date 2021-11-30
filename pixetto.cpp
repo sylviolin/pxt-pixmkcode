@@ -210,7 +210,8 @@ namespace pixetto {
 	{
 		int try_connect = 0;
 		do {
-			serial->clearRxBuffer();
+			//serial->clearRxBuffer();
+			ssflush();
 			
 			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_VERSION, 0, PXT_PACKET_END};
 			serial->send(cmd_buf, 5, ASYNC);
@@ -283,7 +284,7 @@ namespace pixetto {
 	{
 		int try_connect = 0;
 		do {
-			serial->clearRxBuffer();
+			ssflush();
 			
 			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_VERSION, 0, PXT_PACKET_END};
 			serial->send(cmd_buf, 5, ASYNC);
@@ -304,7 +305,7 @@ namespace pixetto {
 				loop++;
 			} while (code_buf[0] != PXT_PACKET_START && loop < 50000);
 
-			if (read_len == 0 || read_len == MICROBIT_NO_DATA) return false;
+			if (read_len == 0 || read_len == MICROBIT_NO_DATA) return 1;
 
 			read_len = serial->read(&code_buf[1], 8);
 
