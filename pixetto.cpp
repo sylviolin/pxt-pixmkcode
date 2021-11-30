@@ -517,25 +517,27 @@ namespace pixetto {
 		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
 		serial->send(cmd_buf, 5, ASYNC);
 		
-			
+		int buffered_len = 0;
+		int loop = 0;
+
+		while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
+			loop++;
+			continue;
+		}
+
+		if (loop >= 300000) return -1;
+
+		return buffered_len;
+		
 		int a = 0;
 		while(1)
 		{
-			int buffered_len = 0;
-			int loop = 0;
 			int read_len = 0;
 
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
 		
-			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
-				loop++;
-				continue;
-			}
-
-			if (loop >= 300000) return -1;
-
-			//if (buffered_len <= 0) return -2;
+			if (buffered_len <= 0) return -2;
 			
 			while (buffered_len>0) {
 				read_len = serial->read(&data_buf[0], 1);
@@ -559,7 +561,7 @@ namespace pixetto {
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
 			{
-				//buffered_len -= data_len;
+				buffered_len -= data_len;
 				continue;
 				/*
 				for (a=0; a<DATA_SIZE; a++)
