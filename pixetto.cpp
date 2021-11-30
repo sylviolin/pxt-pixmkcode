@@ -507,6 +507,7 @@ namespace pixetto {
 		return true;
 	}
 
+	/*
 	//%
 	int isTested(){
 		if (bOnStarting) 
@@ -652,8 +653,8 @@ namespace pixetto {
 		}
 		return 6;
 	}
-
-	/*
+	*/
+	
 	//%
 	int isTested(){
 		if (bOnStarting) 
@@ -662,7 +663,7 @@ namespace pixetto {
 		//ssflush();
 		serial->clearRxBuffer();
 		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
-		serial->send(cmd_buf, 5, ASYNC);
+		serial->send(cmd_buf, 5);//, ASYNC);
 		
 		int a = 0;
 		//while(1)
@@ -793,7 +794,6 @@ namespace pixetto {
 		}
 		return 6;
 	}
-	*/
 
 	//%
 	bool getFuncID(int func_id){
