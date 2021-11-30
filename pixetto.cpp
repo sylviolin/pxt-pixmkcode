@@ -259,8 +259,7 @@ namespace pixetto {
 		
 		if (getPinName(tx, txn) && getPinName(rx, rxn))
 		{
-			if (serial == nullptr)
-				serial = new MicroBitSerial(txn, rxn, 64, 20);
+			serial = new MicroBitSerial(txn, rxn, 64, 20);
 				
 			#if MICROBIT_CODAL
 			serial->setBaudrate(38400);
@@ -331,8 +330,7 @@ namespace pixetto {
 		
 		if (getPinName(tx, txn) && getPinName(rx, rxn))
 		{
-			if (serial == nullptr)
-				serial = new MicroBitSerial(txn, rxn, 64, 20);
+			serial = new MicroBitSerial(txn, rxn, 64, 20);
 
 			#if MICROBIT_CODAL
 			serial->setBaudrate(38400);
