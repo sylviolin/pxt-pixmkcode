@@ -221,12 +221,12 @@ namespace pixetto {
 			uint8_t code_buf[9] = {0xFF};
 			int buffered_len = 0;
 		
-			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 50000) {
+			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
 				loop++;
 				continue;
 			}
 
-			if (loop >= 50000) return false;
+			if (loop >= 300000) return false;
 			
 			read_len = serial->read(code_buf, 9);
 
@@ -292,7 +292,7 @@ namespace pixetto {
 				continue;
 			}
 
-			if (loop >= 50000) return false;
+			if (loop >= 50000) return 1;
 			
 			read_len = serial->read(code_buf, 9);
 
@@ -318,7 +318,8 @@ namespace pixetto {
 		
 		if (getPinName(tx, txn) && getPinName(rx, rxn))
 		{
-			serial = new MicroBitSerial(txn, rxn, 64, 20);
+			if (serial == nullptr)
+				serial = new MicroBitSerial(txn, rxn, 64, 20);
 
 			#if MICROBIT_CODAL
 			serial->setBaudrate(38400);
