@@ -515,7 +515,7 @@ namespace pixetto {
 		//ssflush();
 		serial->clearRxBuffer();
 		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
-		serial->send(cmd_buf, 5, ASYNC);
+		serial->send(cmd_buf, 5);//, ASYNC);
 		
 		int buffered_len = 0;
 		int loop = 0;
