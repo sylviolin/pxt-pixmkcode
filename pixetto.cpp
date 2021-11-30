@@ -428,7 +428,7 @@ namespace pixetto {
 			if (read_len != (data_len-3)) return false;
 			if (data_buf[data_len-1] != PXT_PACKET_END) return false;
 			if (!verifyChecksum(data_buf, data_len)) return false;
-			if (data_buf[2] == 0) return false; // num == 0
+			if (data_buf[2] == 0) return false; // null packet
 			
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
@@ -512,7 +512,8 @@ namespace pixetto {
 		if (bOnStarting) 
 			return -1;
 		
-		ssflush();
+		//ssflush();
+		serial->clearRxBuffer();
 		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
 		serial->send(cmd_buf, 5, ASYNC);
 		
@@ -551,11 +552,11 @@ namespace pixetto {
 			if (read_len != (data_len-3)) return 2;
 			if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
 			if (!verifyChecksum(data_buf, data_len)) return 4;
-			if (data_buf[2] == 0) return 5; // num == 0
+			if (data_buf[2] == 0) return 5; // null packet
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
 			{
-				continue;
+				return 7;
 			}
 		}
 		
