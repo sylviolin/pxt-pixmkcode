@@ -480,12 +480,12 @@ namespace pixetto {
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
 		
-			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
+			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) {
 				loop++;
 				continue;
 			}
 
-			if (loop >= 300000) return -1;
+			if (loop >= 400000) return -1;
 
 			read_len = serial->read(&data_buf[0], 1);
 			if (data_buf[0] != PXT_PACKET_START) return -2;
