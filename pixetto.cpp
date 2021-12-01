@@ -132,6 +132,7 @@ enum PixLanesField {
 namespace pixetto {
 	MicroBitSerial *serial = nullptr;
 	uint8_t data_buf[DATA_SIZE] = {0xFF};
+	int m_funcid = 0;
 	int data_len = 0;
 	int m_type = 0;
 	int m_x = 0;
@@ -338,8 +339,15 @@ namespace pixetto {
 
 	//%
 	void enableFunc(int func_id){
+		m_funcid = func_id;
 		uint8_t cmd_buf[6] = {PXT_PACKET_START, 0x06, PXT_CMD_SET_FUNC, (uint8_t)func_id, 0, PXT_PACKET_END};
 		serial->send(cmd_buf, 6, ASYNC);
+		
+		if (m_funcid == VOICE_COMMANDS) {
+			cmd_buf[2] = PXT_CMD_SET_DETMODE;
+			cmd_buf[3] = 1;
+			serial->send(cmd_buf, 6, ASYNC);
+		}
 		return;
 	}
 	
@@ -348,30 +356,42 @@ namespace pixetto {
 		if (bOnStarting) 
 			return false;
 			
-		serial->clearRxBuffer();
-		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
-		serial->send(cmd_buf, 5);//, ASYNC);
-
+		if (m_funcid != VOICE_COMMANDS) {
+			serial->clearRxBuffer();
+			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
+			serial->send(cmd_buf, 5);//, ASYNC);
+		}
+		
 		int a = 0;
 		
 		while(1){
-			int buffered_len = 0;
+			//int buffered_len = 0;
 			int loop = 0;
 			int read_len = 0;
 
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
 		
-			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
+			/*
+			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) {
 				loop++;
 				continue;
 			}
 
-			if (loop >= 300000) return false;
+			if (loop >= 400000) return false;
 
 			read_len = serial->read(&data_buf[0], 1);
 			if (data_buf[0] != PXT_PACKET_START) return false;
+			*/
 			
+			do {
+				read_len = serial->read(data_buf, 1, ASYNC);
+				loop++;
+			} while (data_buf[0] != PXT_PACKET_START && loop < 400000);
+			
+			if (read_len == 0 || read_len == MICROBIT_NO_DATA) 
+				return false;
+
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 			if (data_len > 3)
@@ -473,13 +493,14 @@ namespace pixetto {
 		int a = 0;
 		
 		while(1){
-			int buffered_len = 0;
+			//int buffered_len = 0;
 			int loop = 0;
 			int read_len = 0;
 
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
 		
+			/*
 			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) {
 				loop++;
 				continue;
@@ -489,7 +510,16 @@ namespace pixetto {
 
 			read_len = serial->read(&data_buf[0], 1);
 			if (data_buf[0] != PXT_PACKET_START) return -2;
+			*/
 			
+			do {
+				read_len = serial->read(data_buf, 1, ASYNC);
+				loop++;
+			} while (data_buf[0] != PXT_PACKET_START && loop < 400000);
+			
+			if (read_len == 0 || read_len == MICROBIT_NO_DATA) 
+				return -1;
+
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 			if (data_len > 3)
