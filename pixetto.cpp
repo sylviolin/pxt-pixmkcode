@@ -517,7 +517,7 @@ namespace pixetto {
 			} while (data_buf[0] != PXT_PACKET_START && loop < 400000);
 			
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) 
-				return -1;
+				return 0;
 
 			read_len = serial->read(&data_buf[1], 2, ASYNC);// get <len, func_id>
 			data_len = data_buf[1];
