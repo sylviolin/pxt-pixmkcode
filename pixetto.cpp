@@ -462,6 +462,7 @@ namespace pixetto {
 		return true;
 	}
 
+	/*
 	//%
 	int isTested(){
 		if (bOnStarting) 
@@ -578,9 +579,9 @@ namespace pixetto {
 			}
 		}
 		return 6;
-	}
+	}*/
 	
-	/*
+	
 	//%
 	int isTested(){
 		if (bOnStarting) 
@@ -592,7 +593,7 @@ namespace pixetto {
 		serial->send(cmd_buf, 5);//, ASYNC);
 		
 		int a = 0;
-		//while(1)
+		while(1)
 		{
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
@@ -630,8 +631,8 @@ namespace pixetto {
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
 			{
-				//continue;
-				
+				continue;
+				/*
 				for (a=0; a<DATA_SIZE; a++)
 					data_buf[a] = 0xFF;
 
@@ -647,8 +648,10 @@ namespace pixetto {
 				if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
 				if (!verifyChecksum(data_buf, data_len)) return 4;
 				if (data_buf[2] == 0) return 5; // null packet
-
+				*/
 			}
+			else
+				break;
 		}
 		
 		if (data_buf[2] == DIGITS_OPERATION) {
@@ -720,7 +723,7 @@ namespace pixetto {
 		}
 		return 6;
 	}
-	*/
+	
 	//%
 	bool getFuncID(int func_id){
 		return (data_buf[2] == func_id);
