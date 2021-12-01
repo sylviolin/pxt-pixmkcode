@@ -519,10 +519,10 @@ namespace pixetto {
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) 
 				return 0;
 
-			read_len = serial->read(&data_buf[1], 2, ASYNC);// get <len, func_id>
+			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 			if (data_len > 3)
-				read_len = serial->read(&data_buf[3], data_len - 3, ASYNC);
+				read_len = serial->read(&data_buf[3], data_len - 3);
 			else
 				return 1;
 
