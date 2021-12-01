@@ -342,12 +342,10 @@ namespace pixetto {
 		m_funcid = func_id;
 		uint8_t cmd_buf[6] = {PXT_PACKET_START, 0x06, PXT_CMD_SET_FUNC, (uint8_t)func_id, 0, PXT_PACKET_END};
 		serial->send(cmd_buf, 6, ASYNC);
-		
-		if (m_funcid == VOICE_COMMANDS) {
-			cmd_buf[2] = PXT_CMD_SET_DETMODE;
-			cmd_buf[3] = 1;
-			serial->send(cmd_buf, 6, ASYNC);
-		}
+
+		cmd_buf[2] = PXT_CMD_SET_DETMODE;
+		cmd_buf[3] = (m_funcid == VOICE_COMMANDS)?1:0;
+		serial->send(cmd_buf, 6, ASYNC);
 		return;
 	}
 	
