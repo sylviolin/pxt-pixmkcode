@@ -220,25 +220,13 @@ namespace pixetto {
 			int read_len = 0;
 			uint8_t code_buf[9] = {0xFF};
 
-			/*
 			do {
 				read_len = serial->read(code_buf, 1, ASYNC);
 				loop++;
 			} while (code_buf[0] != PXT_PACKET_START && loop < 300000);
 
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) return false;
-			*/
-			int buffered_len = 0;
-			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
-				loop++;
-				continue;
-			}
 
-			if (loop >= 300000) return false;
-
-			read_len = serial->read(&code_buf[0], 1);
-			if (code_buf[0] != PXT_PACKET_START) return false;
-			
 			read_len = serial->read(&code_buf[1], 8);
 
 			if (read_len == 8 &&
@@ -297,25 +285,12 @@ namespace pixetto {
 			int read_len = 0;
 			uint8_t code_buf[9] = {0xFF};
 
-			/*
 			do {
 				read_len = serial->read(code_buf, 1, ASYNC);
 				loop++;
 			} while (code_buf[0] != PXT_PACKET_START && loop < 300000);
 
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) return 1;
-			*/
-			
-			int buffered_len = 0;
-			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 300000) {
-				loop++;
-				continue;
-			}
-
-			if (loop >= 300000) return 1;
-
-			read_len = serial->read(&code_buf[0], 1);
-			if (code_buf[0] != PXT_PACKET_START) return 3;
 
 			read_len = serial->read(&code_buf[1], 8);
 			if (read_len == 8 &&
