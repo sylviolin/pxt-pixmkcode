@@ -499,18 +499,18 @@ namespace pixetto {
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
 		
-			/*
+			int buffered_len = 0;
 			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) {
 				loop++;
 				continue;
 			}
 
-			if (loop >= 400000) return -1;
+			if (loop >= 400000) return 0;
 
 			read_len = serial->read(&data_buf[0], 1);
-			if (data_buf[0] != PXT_PACKET_START) return -2;
-			*/
+			if (data_buf[0] != PXT_PACKET_START) return 8;
 			
+			/*
 			do {
 				read_len = serial->read(data_buf, 1, ASYNC);
 				loop++;
@@ -518,7 +518,8 @@ namespace pixetto {
 			
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) 
 				return 0;
-
+			*/
+			
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 			if (data_len > 3)
