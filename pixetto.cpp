@@ -532,7 +532,7 @@ namespace pixetto {
 			if (data_buf[2] == 0) return 5; // null packet
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
-				continue;
+				return 7;
 			else
 				break;
 		}	
