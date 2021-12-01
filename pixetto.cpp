@@ -526,7 +526,7 @@ namespace pixetto {
 			else
 				return 1;
 
-			return data_buf[0];
+			return data_buf[1];
 
 			if (read_len != (data_len-3)) return 2;
 			if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
