@@ -528,7 +528,7 @@ namespace pixetto {
 
 			if (read_len != (data_len-3)) return 2;
 			if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
-			if (!verifyChecksum(data_buf, data_len)) return 4;
+			if (!verifyChecksum(data_buf, data_len)) return data_len;
 			if (data_buf[2] == 0) return 5; // null packet
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
