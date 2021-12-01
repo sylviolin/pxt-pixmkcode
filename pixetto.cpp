@@ -485,11 +485,12 @@ namespace pixetto {
 		if (bOnStarting) 
 			return -1;
 		
-		//ssflush();
-		serial->clearRxBuffer();
-		uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
-		serial->send(cmd_buf, 5);//, ASYNC);
-
+		if (m_funcid != VOICE_COMMANDS) {
+			serial->clearRxBuffer();
+			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_DATA, 0, PXT_PACKET_END};
+			serial->send(cmd_buf, 5);//, ASYNC);
+		}
+		
 		int a = 0;
 		
 		while(1){
