@@ -520,12 +520,14 @@ namespace pixetto {
 
 			if (loop >= 400000) {
 				m_failcount++;
-				if (m_failcount > 10)
+				if (m_failcount > 5)
 				{
-					m_failcount = 0;
 					int ret = test_opencam();
-					if (ret == -2 && m_funcid == VOICE_COMMANDS)
-						setDetMode(true);
+					if (ret == -2) {
+						m_failcount = 0;
+					    if (m_funcid == VOICE_COMMANDS)
+							setDetMode(true);
+					}
 					ssflush();
 					return ret;
 				}
@@ -538,8 +540,11 @@ namespace pixetto {
 			if (data_buf[0] != PXT_PACKET_START) {
 				ssflush();
 				int ret = test_opencam();
-				if (ret == -2 && m_funcid == VOICE_COMMANDS)
-					setDetMode(true);
+				if (ret == -2) {
+					m_failcount = 0;
+					if (m_funcid == VOICE_COMMANDS)
+						setDetMode(true);
+				}
 				return ret;
 			}
 			/*
