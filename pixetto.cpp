@@ -505,7 +505,7 @@ namespace pixetto {
 			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) 
 				loop++;
 
-			return loop;
+			//return loop;
 			if (loop >= 400000) {
 				m_failcount++;
 				if (m_failcount > 10)
