@@ -505,6 +505,7 @@ namespace pixetto {
 			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) 
 				loop++;
 
+			return loop;
 			if (loop >= 400000) {
 				m_failcount++;
 				if (m_failcount > 10)
@@ -513,6 +514,7 @@ namespace pixetto {
 					int ret = test_opencam();
 					if (ret == -2 && m_funcid == VOICE_COMMANDS)
 						setDetMode(true);
+					serial->clearRxBuffer();
 					return ret;
 				}
 				return 0;
@@ -520,7 +522,7 @@ namespace pixetto {
 
 			m_failcount = 0;
 			read_len = serial->read(&data_buf[0], 1);
-			if (data_buf[0] != PXT_PACKET_START) {
+			if (read_len <= 0 || data_buf[0] != PXT_PACKET_START) {
 				serial->clearRxBuffer();
 				return 8;
 			}
