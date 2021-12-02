@@ -522,6 +522,8 @@ namespace pixetto {
 
 			m_failcount = 0;
 			read_len = serial->read(&data_buf[0], 1, ASYNC);
+			return data_buf[0];
+			
 			if (data_buf[0] != PXT_PACKET_START) {
 				while (serial->clearRxBuffer() != MICROBIT_OK)
 					continue;
