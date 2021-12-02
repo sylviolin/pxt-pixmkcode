@@ -235,7 +235,10 @@ namespace pixetto {
 			    code_buf[0] == PXT_PACKET_START &&
 				code_buf[8] == PXT_PACKET_END &&
 				code_buf[2] == PXT_RET_FW_VERSION)
+			{
+				serial->clearRxBuffer();
 				return true;
+			}
 				
 			try_connect++;
 			uBit.sleep(500);
@@ -299,7 +302,10 @@ namespace pixetto {
 			    code_buf[0] == PXT_PACKET_START &&
 				code_buf[8] == PXT_PACKET_END &&
 				code_buf[2] == PXT_RET_FW_VERSION)
+			{
+				serial->clearRxBuffer();
 				return -2;
+			}
 
 			try_connect++;
 			uBit.sleep(500);
