@@ -303,7 +303,6 @@ namespace pixetto {
 				code_buf[8] == PXT_PACKET_END &&
 				code_buf[2] == PXT_RET_FW_VERSION)
 			{
-				serial->clearRxBuffer();
 				return -2;
 			}
 
@@ -343,16 +342,20 @@ namespace pixetto {
 			
 		return ret;
     }
+    
+    void setDetMode(bool isStream){
+		uint8_t cmd_buf[6] = {PXT_PACKET_START, 0x06, PXT_CMD_SET_DETMODE, (uint8_t)isStream, 0, PXT_PACKET_END};
+		serial->send(cmd_buf, 6, ASYNC);
+	}
 
 	//%
 	void enableFunc(int func_id){
 		m_funcid = func_id;
 		uint8_t cmd_buf[6] = {PXT_PACKET_START, 0x06, PXT_CMD_SET_FUNC, (uint8_t)func_id, 0, PXT_PACKET_END};
 		serial->send(cmd_buf, 6, ASYNC);
-
-		cmd_buf[2] = PXT_CMD_SET_DETMODE;
-		cmd_buf[3] = (m_funcid == VOICE_COMMANDS)?1:0;
-		serial->send(cmd_buf, 6, ASYNC);
+		
+		if (m_funcid == VOICE_COMMANDS)
+			setDetMode(true);
 		return;
 	}
 	
@@ -506,11 +509,15 @@ namespace pixetto {
 				if (m_failcount > 10)
 				{
 					m_failcount = 0;
-					return test_opencam();
+					int ret = test_opencam();
+					if (ret == -2 && m_funcid == VOICE_COMMANDS)
+						setDetMode(true);
+					return ret;
 				}
 				return 0;
 			}
 
+			m_failcount = 0;
 			read_len = serial->read(&data_buf[0], 1);
 			if (data_buf[0] != PXT_PACKET_START) return 8;
 			
