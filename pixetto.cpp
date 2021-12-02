@@ -388,9 +388,10 @@ namespace pixetto {
 				m_failcount++;
 				if (m_failcount > 5)
 				{
-					m_failcount = 0;
-					if (opencam() && m_funcid == VOICE_COMMANDS)
-						setDetMode(true);
+					if (opencam()) {
+						m_failcount = 0;
+						enableFunc(m_funcid);
+					}
 					ssflush();
 				}
 				return false;
@@ -401,8 +402,10 @@ namespace pixetto {
 			
 			if (data_buf[0] != PXT_PACKET_START) {
 				ssflush();
-				if (opencam() && m_funcid == VOICE_COMMANDS)
-					setDetMode(true);
+				if (opencam()) {
+					enableFunc(m_funcid);
+				}
+				ssflush();
 				return false;
 			}
 
