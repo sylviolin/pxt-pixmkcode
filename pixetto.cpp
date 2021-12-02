@@ -291,20 +291,20 @@ namespace pixetto {
 				loop++;
 			} while (code_buf[0] != PXT_PACKET_START && loop < 300000);
 
-			if (read_len == 0 || read_len == MICROBIT_NO_DATA) return 1;
+			if (read_len == 0 || read_len == MICROBIT_NO_DATA) return -1;
 
 			read_len = serial->read(&code_buf[1], 8);
 			if (read_len == 8 &&
 			    code_buf[0] == PXT_PACKET_START &&
 				code_buf[8] == PXT_PACKET_END &&
 				code_buf[2] == PXT_RET_FW_VERSION)
-				return 2;
+				return -2;
 
 			try_connect++;
 			uBit.sleep(500);
 		} while (try_connect < 4);
 
-		return 4;
+		return -3;
 	}
     //% 
     int test_begin(PixSerialPin rx, PixSerialPin tx){
@@ -497,8 +497,7 @@ namespace pixetto {
 			}
 
 			if (loop >= 400000) {
-				//opencam();
-				return 0;
+				return test_opencam();
 			}
 
 			read_len = serial->read(&data_buf[0], 1);
