@@ -363,25 +363,22 @@ namespace pixetto {
 		int a = 0;
 		
 		while(1){
-			//int buffered_len = 0;
-			int loop = 0;
-			int read_len = 0;
-
 			for (a=0; a<DATA_SIZE; a++)
 				data_buf[a] = 0xFF;
 		
-			/*
-			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) {
+			int loop = 0;
+			int read_len = 0;
+			int buffered_len = 0;
+
+			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) 
 				loop++;
-				continue;
-			}
 
 			if (loop >= 400000) return false;
 
 			read_len = serial->read(&data_buf[0], 1);
 			if (data_buf[0] != PXT_PACKET_START) return false;
-			*/
 			
+			/*
 			do {
 				read_len = serial->read(data_buf, 1, ASYNC);
 				loop++;
@@ -389,7 +386,8 @@ namespace pixetto {
 			
 			if (read_len == 0 || read_len == MICROBIT_NO_DATA) 
 				return false;
-
+			*/
+			
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 			if (data_len > 3)
@@ -527,15 +525,15 @@ namespace pixetto {
 			else
 				return 1;
 
-			return data_buf[1];
+			//return data_buf[1];
 
 			if (read_len != (data_len-3)) return 2;
 			if (data_buf[data_len-1] != PXT_PACKET_END) return 3;
-			if (!verifyChecksum(data_buf, data_len)) return data_len;
+			if (!verifyChecksum(data_buf, data_len)) return 4;
 			if (data_buf[2] == 0) return 5; // null packet
 			
 			if (data_buf[2] == PXT_RET_OBJNUM)
-				return 7;
+				continue;
 			else
 				break;
 		}	
