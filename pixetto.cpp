@@ -540,7 +540,7 @@ namespace pixetto {
 				int ret = test_opencam();
 				if (ret == -2 && m_funcid == VOICE_COMMANDS)
 					setDetMode(true);
-				return 8;
+				return ret;
 			}
 			/*
 			do {
