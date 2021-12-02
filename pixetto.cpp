@@ -385,13 +385,27 @@ namespace pixetto {
 				loop++;
 
 			if (loop >= 400000) {
-				//opencam();
+				m_failcount++;
+				if (m_failcount > 5)
+				{
+					m_failcount = 0;
+					if (opencam() && m_funcid == VOICE_COMMANDS)
+						setDetMode(true);
+					ssflush();
+				}
 				return false;
 			}
 
+			m_failcount = 0;
 			read_len = serial->read(&data_buf[0], 1);
-			if (data_buf[0] != PXT_PACKET_START) return false;
 			
+			if (data_buf[0] != PXT_PACKET_START) {
+				ssflush();
+				if (opencam() && m_funcid == VOICE_COMMANDS)
+					setDetMode(true);
+				return false;
+			}
+
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 			if (data_len > 3)
