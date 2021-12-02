@@ -303,6 +303,7 @@ namespace pixetto {
 				code_buf[8] == PXT_PACKET_END &&
 				code_buf[2] == PXT_RET_FW_VERSION)
 			{
+				serial->clearRxBuffer();
 				return -2;
 			}
 
@@ -519,8 +520,10 @@ namespace pixetto {
 
 			m_failcount = 0;
 			read_len = serial->read(&data_buf[0], 1);
-			if (data_buf[0] != PXT_PACKET_START) return 8;
-			
+			if (data_buf[0] != PXT_PACKET_START) {
+				serial->clearRxBuffer();
+				return 8;
+			}
 			/*
 			do {
 				read_len = serial->read(data_buf, 1, ASYNC);
