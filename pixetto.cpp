@@ -374,7 +374,7 @@ namespace pixetto {
 				loop++;
 
 			if (loop >= 400000) {
-				opencam();
+				//opencam();
 				return false;
 			}
 
@@ -497,7 +497,7 @@ namespace pixetto {
 			}
 
 			if (loop >= 400000) {
-				opencam();
+				//opencam();
 				return 0;
 			}
 
