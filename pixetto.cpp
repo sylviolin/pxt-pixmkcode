@@ -523,7 +523,8 @@ namespace pixetto {
 			m_failcount = 0;
 			read_len = serial->read(&data_buf[0], 1);
 			if (read_len <= 0 || data_buf[0] != PXT_PACKET_START) {
-				serial->clearRxBuffer();
+				while (serial->clearRxBuffer() != MICROBIT_OK)
+					continue;
 				return 8;
 			}
 			/*
