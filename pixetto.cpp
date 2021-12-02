@@ -144,6 +144,7 @@ namespace pixetto {
 	char m_eqExpr[17] = {0};
 	float m_posx=0, m_posy=0, m_posz=0, m_rotx=0, m_roty=0, m_rotz=0, m_centerx=0, m_centery=0;
 	bool bOnStarting = false;
+	int m_failcount = 0;
 	
     bool getPinName(PixSerialPin p, PinName& name) {
       switch(p) {
@@ -491,13 +492,17 @@ namespace pixetto {
 				data_buf[a] = 0xFF;
 		
 			int buffered_len = 0;
-			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) {
+			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) 
 				loop++;
-				continue;
-			}
 
 			if (loop >= 400000) {
-				return test_opencam();
+				m_failcount++;
+				if (m_failcount > 10)
+				{
+					m_failcount = 0;
+					return test_opencam();
+				}
+				return 0;
 			}
 
 			read_len = serial->read(&data_buf[0], 1);
