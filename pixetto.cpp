@@ -525,8 +525,7 @@ namespace pixetto {
 					int ret = test_opencam();
 					if (ret == -2) {
 						m_failcount = 0;
-					    if (m_funcid == VOICE_COMMANDS)
-							setDetMode(true);
+					    enableFunc(m_funcid);
 					}
 					ssflush();
 					return ret;
@@ -542,8 +541,7 @@ namespace pixetto {
 				int ret = test_opencam();
 				if (ret == -2) {
 					m_failcount = 0;
-					if (m_funcid == VOICE_COMMANDS)
-						setDetMode(true);
+					enableFunc(m_funcid);				
 				}
 				return ret;
 			}
