@@ -207,7 +207,7 @@ namespace pixetto {
 		return (sum == buf[len-2]);
 	}
 
-	bool opencam(bool reset) 
+	bool opencam() 
 	{
 		int try_connect = 0;
 		do {
@@ -264,7 +264,7 @@ namespace pixetto {
 			//serial->setTxBufferSize(32);
 			uBit.sleep(1000);
 			
-			ret = opencam(false);
+			ret = opencam();
 		}
 		if (ret)
 			bOnStarting = false;
@@ -273,7 +273,7 @@ namespace pixetto {
     }
     
     
-    int test_opencam(bool reset) 
+    int test_opencam() 
 	{
 		int try_connect = 0;
 		do {
@@ -329,7 +329,7 @@ namespace pixetto {
 			//serial->setTxBufferSize(32);
 			uBit.sleep(1000);
 			
-			ret = test_opencam(false);
+			ret = test_opencam();
 		}
 		if (ret)
 			bOnStarting = false;
@@ -373,20 +373,13 @@ namespace pixetto {
 			while ((buffered_len = serial->rxBufferedSize()) <= 0 && loop < 400000) 
 				loop++;
 
-			if (loop >= 400000) return false;
+			if (loop >= 400000) {
+				opencam();
+				return false;
+			}
 
 			read_len = serial->read(&data_buf[0], 1);
 			if (data_buf[0] != PXT_PACKET_START) return false;
-			
-			/*
-			do {
-				read_len = serial->read(data_buf, 1, ASYNC);
-				loop++;
-			} while (data_buf[0] != PXT_PACKET_START && loop < 400000);
-			
-			if (read_len == 0 || read_len == MICROBIT_NO_DATA) 
-				return false;
-			*/
 			
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
@@ -503,7 +496,10 @@ namespace pixetto {
 				continue;
 			}
 
-			if (loop >= 400000) return 0;
+			if (loop >= 400000) {
+				opencam();
+				return 0;
+			}
 
 			read_len = serial->read(&data_buf[0], 1);
 			if (data_buf[0] != PXT_PACKET_START) return 8;
