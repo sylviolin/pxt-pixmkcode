@@ -48,41 +48,41 @@ enum PixSerialPin {
 };
 
 enum PixFunction {
-        //% block="Color Detection"
+        //% block="color detection"
         COLOR_DETECTION=1,
-        //% block="Color Codes Detection"
+        //% block="color codes detection"
         COLOR_LABEL=2,
-        //% block="Shape Detection"
+        //% block="shape detection"
         SHAPE_DETECTION=3,
-        //% block="Sphere Detection"
+        //% block="sphere detection"
         SPHERE_DETECTION=4,
-        //% block="Template Matching"
+        //% block="template matching"
         TEMPLATE=6,
-        //% block="Keypoint"
+        //% block="keypoint"
         KEYPOINT=8,
-        //% block="Neural Network"
+        //% block="neural network"
         NEURAL_NETWORK=9,
-        //% block="AprilTag(16h5)"
+        //% block="aprilTag(16h5)"
         APRILTAG=10,
-        //% block="Face Detection"
+        //% block="face detection"
         FACE_DETECTION=11,
-        //% block="Traffic Sign Detection"
+        //% block="traffic sign detection"
         TRAFFIC_SIGN_DETECTION=12,
-        //% block="Handwritten Digits Detection"
+        //% block="handwritten digits detection"
         HANDWRITTEN_DIGITS_DETECTION=13,
-        //% block="Handwritten Letters Detection"
+        //% block="handwritten letters detection"
         HANDWRITTEN_LETTERS_DETECTION=14,
-        //% block="Remote Computing"
+        //% block="remote computing"
         REMOTE_COMPUTING=15,
-        //% block="Lanes Detection"
+        //% block="lanes detection"
         LANES_DETECTION=16,
-        //% block="Digits Operation"
+        //% block="digits operation"
         DIGITS_OPERATION=17,
-        //% block="Simple Classifier"
+        //% block="simple classifier"
         SIMPLE_CLASSIFIER=18,
-        //% block="Voice Commands"
+        //% block="voice commands"
         VOICE_COMMANDS=19,
-        //% block="Autonomous Driving"
+        //% block="autonomous driving"
         LANE_AND_SIGN=20        
 };
     
@@ -106,21 +106,21 @@ enum PixApriltagField {
 };
 
 enum PixLanesField {
-        //% block="Left X1"
+        //% block="left x1"
         LANES_LX1=1,
-        //% block="Left Y1"
+        //% block="left y1"
         LANES_LY1,
-        //% block="Left X2"
+        //% block="left x2"
         LANES_LX2,
-        //% block="Left Y2"
+        //% block="left y2"
         LANES_LY2,
-        //% block="Right X1"
+        //% block="right x1"
         LANES_RX1,
-        //% block="Right Y1"
+        //% block="right y1"
         LANES_RY1,
-        //% block="Right X2"
+        //% block="right x2"
         LANES_RX2,
-        //% block="Right Y2"
+        //% block="right y2"
         LANES_RY2
 };
 
@@ -548,15 +548,6 @@ namespace pixetto {
 				}
 				return ret;
 			}
-			/*
-			do {
-				read_len = serial->read(data_buf, 1, ASYNC);
-				loop++;
-			} while (data_buf[0] != PXT_PACKET_START && loop < 400000);
-			
-			if (read_len == 0 || read_len == MICROBIT_NO_DATA) 
-				return 0;
-			*/
 			
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
@@ -564,8 +555,6 @@ namespace pixetto {
 				read_len = serial->read(&data_buf[3], data_len - 3);
 			else
 				return 1;
-
-			//return data_buf[1];
 
 			if (read_len != (data_len-3)) return 2;
 			if (data_buf[data_len-1] != PXT_PACKET_END) return 3;

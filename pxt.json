@@ -1,6 +1,6 @@
 {
     "name": "pixmkcode",
-    "version": "0.0.2",
+    "version": "1.6.0",
     "description": "Pixetto blocks for micro:bit",
     "license": "MIT",
     "dependencies": {

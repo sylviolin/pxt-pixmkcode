@@ -28,39 +28,39 @@ namespace pixetto {
     }
 
     export enum PixTrafficSign {
-        //% block="No entre"
+        //% block="no entre"
         SIGN_NO_ENTRE = 0,
-        //% block="No left turn"
+        //% block="no left turn"
 		SIGN_NO_LEFT_TURN,
-		//% block="No right turn"
+		//% block="no right turn"
 		SIGN_NO_RIGHT_TURN,
-		//% block="Wrong way"
+		//% block="wrong way"
 		SIGN_WRONG_WAY,
-		//% block="No U turn"
+		//% block="no U turn"
 		SIGN_NO_U_TURN,
-		//% block="Maximum speed limit"
+		//% block="maximum speed limit"
 		SIGN_MAX_SPEED,
-		//% block="One-way traffic"
+		//% block="one-way traffic"
 		SIGN_ONEWAY_TRAFFIC,
-		//% block="Left turn"
+		//% block="left turn"
 		SIGN_LEFT_TURN,
-		//% block="Right turn"
+		//% block="right turn"
 		SIGN_RIGHT_TURN,
-		//% block="Minimum speed limit"
+		//% block="minimum speed limit"
 		SIGN_MIN_SPEED,
-		//% block="U turn"
+		//% block="u turn"
 		SIGN_U_TURN,
-		//% block="Tunnel ahead"
+		//% block="tunnel ahead"
 		SIGN_TUNNEL_AHEAD,
-		//% block="Beware of children"
+		//% block="beware of children"
 		SIGN_BEWARE_OF_CHILDREN,
-		//% block="Roundabout"
+		//% block="roundabout"
 		SIGN_ROUNDABOUT,
-		//% block="Yield to pedestrian"
+		//% block="yield to pedestrian"
 		SIGN_YIELD_TO_PEDESTRIAN,
-		//% block="Red light"
+		//% block="red light"
 		SIGN_RED_LIGHT,
-		//% block="Green light"
+		//% block="green light"
 		SIGN_GREEN_LIGHT
     }
 	
@@ -203,7 +203,45 @@ namespace pixetto {
 		//% block="起立"
 		VOICE_StandUp,
 		//% block="蹲下"
-		VOICE_SquatDown
+		VOICE_SquatDown,
+		//% block="這是什麼顏色"
+		VOICE_WhatColor,
+		//% block="這是什麼形狀"
+		VOICE_WhatShape,
+		//% block="顏色偵測"
+		VOICE_ColorDetect,
+		//% block="顏色組合偵測"
+		VOICE_ColorCode,
+		//% block="形狀偵測"
+		VOICE_ShapeDetect,
+		//% block="球體偵測"
+		VOICE_ShpereDetect,
+		//% block="模板匹配"
+		VOICE_Template,
+		//% block="特徵點偵測"
+		VOICE_Keypoints,
+		//% block="神經網路辨識"
+		VOICE_NeuralNetwork,
+		//% block="交通標誌辨識"
+		VOICE_TrafficSign,
+		//% block="手寫數字辨識"
+		VOICE_HandDigits,
+		//% block="手寫字母辨識"
+		VOICE_HandLetters,
+		//% block="數字運算"
+		VOICE_DigitsOp,
+		//% block="車道偵測"
+		VOICE_Lanes,
+		//% block="人臉偵測"
+		VOICE_Face,
+		//% block="遠端運算"
+		VOICE_RemoteComputing,
+		//% block="簡易分類器"
+		VOICE_SimpleClassifier,
+		//% block="自動駕駛"
+		VOICE_AutoDrive,
+		//% block="停止偵測功能"
+		VOICE_StopDetect		
     }
     
 	//% block="initialize vision sensor RX %rx TX %tx"
@@ -269,21 +307,21 @@ namespace pixetto {
         return 0;
     }
 
-    //% block="Color Detection detects color %color"
+    //% block="color detection detects color %color"
     //% shim=pixetto::get_colordetect_color
     //% weight=80
     export function get_colordetect_color(color: PixColorType): boolean {
         return false;
     }
     
-    //% block="Shape Detection detects shape %shape"
+    //% block="shape detection detects shape %shape"
     //% shim=pixetto::get_shapedetect_shape
     //% weight=79
     export function get_shapedetect_shape(shape: PixShapeType): boolean {
         return false;
     }
 
-    //% block="Sphere Detection detects color %color"
+    //% block="sphere detection detects color %color"
     //% shim=pixetto::get_spheredetect_color
     //% weight=78
     export function get_spheredetect_color(color: PixColorType): boolean {
@@ -297,84 +335,84 @@ namespace pixetto {
         return false;
     }
 
-    //% block="Keypoint detects %id"
+    //% block="keypoint detects %id"
     //% shim=pixetto::get_keypoint_id
     //% weight=76
     export function get_keypoint_id(id: PixTemplate): boolean {
         return false;
     }
 
-    //% block="Neural Network detects %id"
+    //% block="neural network detects %id"
     //% shim=pixetto::get_nn_id
     //% weight=75
     export function get_nn_id(id: number): boolean {
         return false;
     }
 
-    //% block="Traffic Sign Detection detects %sign"
+    //% block="traffic sign detection detects %sign"
     //% shim=pixetto::get_traffic_sign
     //% weight=74
     export function get_traffic_sign(sign: PixTrafficSign): boolean {
         return false;
     }
 
-    //% block="Handwritten Digits Detection detects %digit"
+    //% block="handwritten digits detection detects %digit"
     //% shim=pixetto::get_hand_digit
     //% weight=73
     export function get_hand_digit(digit: PixHandDigit): boolean {
         return false;
     }
 
-    //% block="Handwritten Lettes Detection detects %letter"
+    //% block="handwritten lettes detection detects %letter"
     //% shim=pixetto::get_hand_letter
     //% weight=72
     export function get_hand_letter(letter: PixHandLetter): boolean {
         return false;
     }
 
-    //% block="Remote Computing detects %id"
+    //% block="remote computing detects %id"
     //% shim=pixetto::get_remote_computing
     //% weight=71
     export function get_remote_computing(id: number): boolean {
         return false;
     }
     
-    //% block="Simple Classifier detects %id"
+    //% block="simple classifier detects %id"
     //% shim=pixetto::get_simple_classifier
     //% weight=70
     export function get_simple_classifier(id: number): boolean {
         return false;
     }
 
-    //% block="Voice Command detects %vcmd"
+    //% block="voice command detects %vcmd"
     //% shim=pixetto::get_voice_command
     //% weight=69
     export function get_voice_command(vcmd: PixVoiceCommand): boolean {
         return false;
     }
 
-    //% block="Apriltag |%number1"
+    //% block="apriltag |%number1"
     //% shim=pixetto::getApriltagField
     //% weight=60
     export function getApriltagField(number1: PixApriltagField): number {
         return 0;
     }
 
-    //% block="Lanes Detection |%number1"
+    //% block="lanes detection |%number1"
     //% shim=pixetto::getLanesField
     //% weight=59
     export function getLanesField(number1: PixLanesField): number {
         return 0;
     }
 
-    //% block="equation answer"
+    //% block="digital operation answer"
     //% shim=pixetto::getEquationAnswer
     //% weight=55
     export function getEquationAnswer(): number {
         return 0;
     }
 
-    //% block="equation expression"
+    //% block="digital operation expression"
     //% shim=pixetto::getEquationExpr
     //% weight=54
     export function getEquationExpr() {
