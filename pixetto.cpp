@@ -291,7 +291,14 @@ namespace pixetto {
 				code_buf[2] == PXT_RET_FW_VERSION)
 			{
 				serial->clearRxBuffer();
-				return -2;
+
+				 FILE *fp = fopen("/sylvia.txt", "w");
+					if(fp == NULL) {
+						error("Could not open file for write\n");
+					}
+					fprintf(fp, "Hello World!\n");
+					fclose(fp);
+					return -2;
 			}
 
 			try_connect++;
