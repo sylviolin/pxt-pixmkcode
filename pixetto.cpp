@@ -402,6 +402,8 @@ namespace pixetto {
 				}*/
 			}
 			
+			if (serial->rxBufferedSize() == 0) return false;
+			
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 			if (data_len > 3)
