@@ -21,17 +21,6 @@
 #define PXT_RET_FW_VERSION	0xE3
 #define PXT_RET_OBJNUM		0x46 //0xE4
 
-/*
-#define PXT_CMD_STREAMOFF	0x7A
-#define PXT_CMD_STREAMON_CB 0x7B
-#define PXT_CMD_QUERY		0x7C
-#define PXT_CMD_ENABLEFUNC	0x7D
-#define PXT_CMD_RESET		0x53 //(83)
-
-#define PXT_RET_CAM_SUCCESS	0xE0
-#define PXT_RET_CAM_ERROR	0xE1   
-*/
-
 #define SERIAL_BUF_SIZE		64
 #define DATA_SIZE			33
 
@@ -62,7 +51,7 @@ enum PixFunction {
         KEYPOINT=8,
         //% block="neural network"
         NEURAL_NETWORK=9,
-        //% block="aprilTag(16h5)"
+        //% block="apriltag(16h5)"
         APRILTAG=10,
         //% block="face detection"
         FACE_DETECTION=11,
@@ -212,7 +201,6 @@ namespace pixetto {
 	{
 		int try_connect = 0;
 		do {
-			//ssflush();
 			serial->clearRxBuffer();
 			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_VERSION, 0, PXT_PACKET_END};
 			serial->send(cmd_buf, 5, ASYNC);
@@ -281,7 +269,6 @@ namespace pixetto {
 	{
 		int try_connect = 0;
 		do {
-			//ssflush();
 			serial->clearRxBuffer();
 			uint8_t cmd_buf[5] = {PXT_PACKET_START, 0x05, PXT_CMD_GET_VERSION, 0, PXT_PACKET_END};
 			serial->send(cmd_buf, 5, ASYNC);
@@ -398,17 +385,23 @@ namespace pixetto {
 			}
 
 			m_failcount = 0;
-			read_len = serial->read(&data_buf[0], 1);
 			
-			if (data_buf[0] != PXT_PACKET_START) {
-				ssflush();
-				if (opencam()) {
-					enableFunc(m_funcid);
-				}
-				ssflush();
-				return false;
+			while (serial->rxBufferedSize()>0) {
+				read_len = serial->read(&data_buf[0], 1);
+			
+				if (data_buf[0] != PXT_PACKET_START) continue;
+				else break;
+				/*if (data_buf[0] != PXT_PACKET_START) 
+				{
+					ssflush();
+					if (opencam()) {
+						enableFunc(m_funcid);
+					}
+					ssflush();
+					return false;
+				}*/
 			}
-
+			
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 			if (data_len > 3)

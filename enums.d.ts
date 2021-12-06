@@ -29,7 +29,7 @@
     KEYPOINT = 8,
     //% block="neural network"
     NEURAL_NETWORK = 9,
-    //% block="aprilTag(16h5)"
+    //% block="apriltag(16h5)"
     APRILTAG = 10,
     //% block="face detection"
     FACE_DETECTION = 11,
