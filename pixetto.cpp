@@ -225,6 +225,13 @@ namespace pixetto {
 				code_buf[2] == PXT_RET_FW_VERSION)
 			{
 				serial->clearRxBuffer();
+				/*
+				 FILE *fp = fopen("/sylvia.txt", "w");
+					if(fp == NULL) {
+						error("Could not open file for write\n");
+					}
+					fprintf(fp, "Hello World!\n");
+					fclose(fp);*/
 				return true;
 			}
 				
@@ -291,14 +298,7 @@ namespace pixetto {
 				code_buf[2] == PXT_RET_FW_VERSION)
 			{
 				serial->clearRxBuffer();
-
-				 FILE *fp = fopen("/sylvia.txt", "w");
-					if(fp == NULL) {
-						error("Could not open file for write\n");
-					}
-					fprintf(fp, "Hello World!\n");
-					fclose(fp);
-					return -2;
+				return -2;
 			}
 
 			try_connect++;
