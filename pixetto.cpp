@@ -275,6 +275,7 @@ namespace pixetto {
     
     int test_opencam() 
 	{
+		/*
 		MicroBitFile * fp = new MicroBitFile("abc", READ_AND_WRITE);
 		
 		if (fp->isValid()) return 3;
@@ -283,7 +284,7 @@ namespace pixetto {
 		ManagedString s = "hello";
 		fp->write(s);
 		fp->close();
-		
+		*/
 		int try_connect = 0;
 		do {
 			serial->clearRxBuffer();
@@ -568,12 +569,14 @@ namespace pixetto {
 					break;
 			}
 			
-			if (serial->rxBufferedSize() == 0) return 7;
-
+			if (serial->rxBufferedSize() < 2) return 7;
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
-			if (data_len > 3)
+
+			if (data_len > 3) {
+				if (serial->rxBufferedSize() < data_len-3) return 8;
 				read_len = serial->read(&data_buf[3], data_len - 3);
+			}
 			else
 				return 1;
 
