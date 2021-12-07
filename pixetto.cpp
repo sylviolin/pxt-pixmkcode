@@ -405,21 +405,12 @@ namespace pixetto {
 			}
 
 			m_failcount = 0;
-			
+			/*
 			while (serial->rxBufferedSize()>0) {
 				read_len = serial->read(&data_buf[0], 1);
 			
 				if (data_buf[0] == PXT_PACKET_START) 
 					break;
-				/*if (data_buf[0] != PXT_PACKET_START) 
-				{
-					ssflush();
-					if (opencam()) {
-						enableFunc(m_funcid);
-					}
-					ssflush();
-					return false;
-				}*/
 			}
 			
 			if (serial->rxBufferedSize() < 2) return false;
@@ -433,6 +424,28 @@ namespace pixetto {
 			else
 				return false;
 
+			while (serial->rxBufferedSize()>0) {
+				read_len = serial->read(&data_buf[0], 1);
+			
+				if (data_buf[0] == PXT_PACKET_START) 
+					break;
+			}
+			*/
+			loop=0;
+			while (serial->rxBufferedSize() < 2 && loop < 10000) loop++;
+			if (loop >= 10000) return false;
+				
+			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
+			data_len = data_buf[1];
+
+			if (data_len > 3) {
+				loop=0;
+				while (serial->rxBufferedSize() < data_len-3 && loop < 10000) loop++;
+				if (loop >= 10000) return false;
+				read_len = serial->read(&data_buf[3], data_len - 3);
+			}
+			else
+				return false;
 
 			if (read_len != (data_len-3)) return false;
 			if (data_buf[data_len-1] != PXT_PACKET_END) return false;
