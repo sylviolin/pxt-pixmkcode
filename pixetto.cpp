@@ -575,11 +575,17 @@ namespace pixetto {
 			//		break;
 			//}
 			
-			//if (serial->rxBufferedSize() < 2) return 7;
+			loop=0;
+			while (serial->rxBufferedSize() < 2 && loop < 10000) loop++;
+			if (loop >=10000) return 7;
+				
 			read_len = serial->read(&data_buf[1], 2);// get <len, func_id>
 			data_len = data_buf[1];
 
 			if (data_len > 3) {
+				loop=0;
+				while (serial->rxBufferedSize() < data_len-3 && loop < 10000) loop++;
+				if (loop >=10000) return 8;
 				//if (serial->rxBufferedSize() < data_len-3) return 8;
 				read_len = serial->read(&data_buf[3], data_len - 3);
 			}
