@@ -276,6 +276,10 @@ namespace pixetto {
     int test_opencam() 
 	{
 		MicroBitFile * fp = new MicroBitFile("abc", READ_AND_WRITE);
+		
+		if (fp->isValid()) return 3;
+		else return 4;
+		
 		ManagedString s = "hello";
 		fp->write(s);
 		fp->close();
