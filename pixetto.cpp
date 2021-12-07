@@ -362,6 +362,8 @@ namespace pixetto {
 		
 		if (m_funcid == VOICE_COMMANDS)
 			setDetMode(true);
+		else 
+			setDetMode(false);
 		return;
 	}
 	
