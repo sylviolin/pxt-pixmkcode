@@ -1,5 +1,6 @@
 #include "pxt.h"
 #include "MicroBit.h"
+#include "MicroBitFile.h"
 
 #ifdef CODAL_CONFIG_H
 #define MICROBIT_CODAL 1
@@ -274,13 +275,11 @@ namespace pixetto {
     
     int test_opencam() 
 	{
-				 FILE *fp = fopen("/sylvia.txt", "w");
-					if(fp == NULL) {
-						error("Could not open file for write\n");
-					}
-					fprintf(fp, "Hello World!\n");
-					fclose(fp);
-
+		MicroBitFile * fp = new MicroBitFile("abc", READ_AND_WRITE);
+		ManagedString s = "hello";
+		fp->write(s);
+		fp->close();
+		
 		int try_connect = 0;
 		do {
 			serial->clearRxBuffer();
